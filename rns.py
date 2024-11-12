@@ -24,10 +24,6 @@ from timeblock import TimeBlock
 
 
 
-
-
-
-
 # create the mod
 m = Mod("TestMod", "thumbnail.png")
 
@@ -35,19 +31,6 @@ anim = m.create_animation("testenemy", "Assets/mod_dreadwyrm.png", "Assets/mod_d
 
 # create the enemies
 glizzy = m.create_enemy("glizzygoblin", anim, anim, (0, 255, 0), (255, 0, 0), 300, 0.45, 1, False, False)
-
-# glizzy goblin stuff
-gg = m.create_pattern("mbp_glizzygoblin0")
-
-init_values = TimeBlock(timeblock.Time(0))
-init_values.add(Zoom(1))
-init_values.add(SetResourceMult(6, 1.5))
-init_values.add(Move("bfCenterX+700", "bfCenterY", 1400))
-gg.add_block(init_values)
-
-patt_repeat = TimeBlock(timeblock.TimeRepeating(5000, 6000))
-patt_repeat.add(AddPatt("TestMod_pattern_mbp_glizzygoblin_f0"))
-gg.add_block(patt_repeat)
 
 
 # glizzy goblin f stuff
@@ -76,6 +59,20 @@ spin_block.add(PattVars(
 ))
 spin_block.add(AddPatt("bp_ray_spinfast"))
 gg_f.add_block(spin_block)
+
+
+# glizzy goblin stuff
+gg = m.create_pattern("mbp_glizzygoblin0")
+
+init_values = TimeBlock(timeblock.Time(0))
+init_values.add(Zoom(1))
+init_values.add(SetResourceMult(6, 1.5))
+init_values.add(Move("bfCenterX+700", "bfCenterY", 1400))
+gg.add_block(init_values)
+
+patt_repeat = TimeBlock(timeblock.TimeRepeating(5000, 6000))
+patt_repeat.add(AddPatt(gg_f))
+gg.add_block(patt_repeat)
 
 
 # create the encounter

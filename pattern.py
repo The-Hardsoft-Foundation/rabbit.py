@@ -3,17 +3,17 @@
 from transpile import Row, Transpilable
 from timeblock import TimeBlock
 
-from command import EndPattern
+# from command import EndPattern
 
 
 # a pattern is just a header and (optional) footer with time blocks in between
 class Pattern(Transpilable):
-    def __init__(self, pattern_key: str, compress: bool = False):
+    def __init__(self, key: str, compress: bool = False):
         # make sure the pattern key is a string
-        assert type(pattern_key) == str, f"{pattern_key} is not a valid pattern key"
+        assert type(key) == str, f"{key} is not a valid pattern key"
 
         # key to identify the current pattern
-        self.key = pattern_key
+        self.key = key
         # list of time blocks
         self.blocks = []
         # whether or not to include extra spaces

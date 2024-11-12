@@ -3,7 +3,9 @@
 from enum import Enum
 
 from transpile import Transpilable, Row
-
+from animation import Animation
+# from enemy import Enemy
+# from encounter import Encounter
 
 # represents a potential input to a command
 # some commands accept only a subset of this
@@ -413,9 +415,11 @@ The "focus scale" is the size of player target reticles around the enemy.  The d
 The "standing frame rate" is the idle framerate of the new animation.  Most animations in the game have a framerate of 4, but the larger animations (boss phase 2s + Karsi's transformed form) have a framerate of 6.
 '''
 class Transform(Command):
-    def __init__(self, animation_key: str, new_radius: CommandExpr, new_draw: CommandExpr, new_focus: CommandExpr, idle_framerate: int):
-        if type(animation_key) == str:
-            assert animation_key >= 0, f"Transform: arg[0] cannot be negative: got {animation_key}"
+    def __init__(self, animation_key: 'Animation | str', new_radius: CommandExpr, new_draw: CommandExpr, new_focus: CommandExpr, idle_framerate: int):
+        if type(animation_key) == Animation:
+            pass
+        elif type(animation_key) == str:
+            pass
         else:
             raise AssertionError(f"Transform: arg[0] must be int: got {type(animation_key)}")
         
@@ -445,7 +449,7 @@ class Transform(Command):
         else:
             raise AssertionError(f"Transform: arg[4] must be int: got {type(idle_framerate)}")
         
-        self.animation_key = animation_key
+        self.animation_key = animation_key.key if type(animation_key) == Animation else animation_key
         self.new_radius = new_radius
         self.new_draw = new_draw
         self.new_focus = new_focus
@@ -457,9 +461,11 @@ class Transform(Command):
 
 # Same as "transform", but transformation effect is very quick (like Karsi, Xin or Ran)
 class TransformSmall(Command):
-    def __init__(self, animation_key: str, new_radius: CommandExpr, new_draw: CommandExpr, new_focus: CommandExpr, idle_framerate: int):
-        if type(animation_key) == str:
-            assert animation_key >= 0, f"TransformSmall: arg[0] cannot be negative: got {animation_key}"
+    def __init__(self, animation_key: 'Animation | str', new_radius: CommandExpr, new_draw: CommandExpr, new_focus: CommandExpr, idle_framerate: int):
+        if type(animation_key) == Animation:
+            pass
+        elif type(animation_key) == str:
+            pass
         else:
             raise AssertionError(f"TransformSmall: arg[0] must be int: got {type(animation_key)}")
         
@@ -489,7 +495,7 @@ class TransformSmall(Command):
         else:
             raise AssertionError(f"TransformSmall: arg[4] must be int: got {type(idle_framerate)}")
         
-        self.animation_key = animation_key
+        self.animation_key = animation_key.key if type(animation_key) == Animation else animation_key
         self.new_radius = new_radius
         self.new_draw = new_draw
         self.new_focus = new_focus
@@ -672,13 +678,18 @@ class PattPositionEnemy(Command):
 
 # Adds a new pattern to the battle.
 class AddPatt(Command):
-    def __init__(self, key: str):
-        if type(key) == str:
+    def __init__(self, pk: 'Pattern | str'):
+        # delayed import of Pattern since it is circular
+        from pattern import Pattern
+
+        if type(pk) == Pattern:
+            pass
+        elif type(pk) == str:
             pass
         else:
-            raise AssertionError(f"AddPatt: arg[0] must be str: got {type(key)}")
-        
-        self.key = key
+            raise AssertionError(f"AddPatt: arg[0] must be Pattern or str: got {type(pk)}")
+
+        self.key = pk.key if type(pk) == Pattern else pk
 
     def transpile(self) -> list[Row]:
         return [Row(["pattAdd", str(self.key)])]
@@ -686,8 +697,13 @@ class AddPatt(Command):
 
 # Adds a new pattern to the battle, and also sets and "x" and "y" pattVar for it.
 class PattAddPos(Command):
-    def __init__(self, key: str, x: CommandExpr, y: CommandExpr):
-        if type(key) == str:
+    def __init__(self, pk: 'Pattern | str', x: CommandExpr, y: CommandExpr):
+        # delayed import of Pattern since it is circular
+        from pattern import Pattern
+
+        if type(pk) == Pattern:
+            pass
+        elif type(pk) == str:
             pass
         else:
             raise AssertionError(f"PattAddPos: arg[0] must be str: got {type(key)}")
@@ -706,30 +722,10 @@ class PattAddPos(Command):
         else:
             raise AssertionError(f"PattAddPos: arg[2] must be either number or str: got {type(y)}")
         
-        self.key = key
+        self.key = pk.key if type(pk) == Pattern else pk
         self.x = x
         self.y = y
         
     def transpile(self) -> list[Row]:
         return [Row(["pattAddPos", str(self.key), str(self.x), str(self.y)])]
     
-
-
-
-
-
-
-
-# test = Mod()
-# p = Pattern()
-# tb = TimeBlock(time)
-# tb.add(Zoom(10))
-# tb.add(Move(10, 10, 500))
-# tb.add(SetVars())
-# p.add(tb)
-
-
-# test.transpile("output_folder")
-
-
-# tb.add(Zoom("(bf_MinX + bf_MinY) * 2"))
