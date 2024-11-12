@@ -41,7 +41,7 @@ class Pattern(Transpilable):
         if not self.compress:
             rows.append(Row())
 
-        rows.extend(EndPattern().transpile())
+        # rows.extend(EndPattern().transpile())
         return rows
 
 

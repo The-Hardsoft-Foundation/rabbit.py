@@ -16,23 +16,28 @@ from timeblock import TimeBlock
 # then have transpile take in the mod?
 # and maybe commands or stuff take in the object if they have to link to them?
 
+# instead of that, extend mod then build that way
+# everything that needs to take in a key to something should take in the object instead (except for built ins)
+# have the mod handle creating and setting them, so something like self.get_pattern("super_cleave") which can also validate for stuff
+
+
+
+
+
+
 
 
 
 # create the mod
 m = Mod("TestMod", "thumbnail.png")
 
-# animation stuff
-anim = Animation("anim_test_enemy", "Assets/mod_dreadwyrm.png", "Assets/mod_dreadwyrm_lq.png")
-m.add_animation(anim)
+anim = m.create_animation("testenemy", "Assets/mod_dreadwyrm.png", "Assets/mod_dreadwyrm_lq.png")
 
 # create the enemies
-glizzy = Enemy("en_glizzygoblin", anim, anim, (0, 255, 0), (255, 0, 0), 300, 0.45, 1, False, False)
-m.add_enemy(glizzy) 
-
+glizzy = m.create_enemy("glizzygoblin", anim, anim, (0, 255, 0), (255, 0, 0), 300, 0.45, 1, False, False)
 
 # glizzy goblin stuff
-gg = Pattern("mbp_glizzygoblin0")
+gg = m.create_pattern("mbp_glizzygoblin0")
 
 init_values = TimeBlock(timeblock.Time(0))
 init_values.add(Zoom(1))
@@ -41,14 +46,12 @@ init_values.add(Move("bfCenterX+700", "bfCenterY", 1400))
 gg.add_block(init_values)
 
 patt_repeat = TimeBlock(timeblock.TimeRepeating(5000, 6000))
-patt_repeat.add(AddPatt("mbp_glizzygoblin_furry0"))
+patt_repeat.add(AddPatt("TestMod_pattern_mbp_glizzygoblin_f0"))
 gg.add_block(patt_repeat)
 
-m.add_pattern(gg)
 
-
-# glizzy goblin furry stuff
-gg_f = Pattern("mbp_glizzygoblin_furry0")
+# glizzy goblin f stuff
+gg_f = m.create_pattern("mbp_glizzygoblin_f0")
 
 center_block = TimeBlock(timeblock.Time(0))
 center_block.add(Move("bfCenterX", "bfCenterY", 500))
@@ -74,18 +77,13 @@ spin_block.add(PattVars(
 spin_block.add(AddPatt("bp_ray_spinfast"))
 gg_f.add_block(spin_block)
 
-m.add_pattern(gg_f)
-
 
 # create the encounter
-glizzy_enc = Encounter("enc_glizzygoblin", glizzy, (400, 0), 12000, tuple(gg for _ in range(6)))
-m.add_encounter(glizzy_enc)
+glizzy_enc = m.create_encounter("glizzygoblin", glizzy, (400, 0), 12000, tuple(gg for _ in range(6)))
 
 
 # create the hallway
-hallway = Hallway(HallwayBase.KINGDOM_OUTSKIRTS)
+hallway = m.create_hallway(HallwayBase.KINGDOM_OUTSKIRTS)
 hallway.add_bossbattle(glizzy_enc)
-m.set_hallway(hallway)
 
-
-m.save(".")
+m.save("./target")

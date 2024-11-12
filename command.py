@@ -25,6 +25,7 @@ class Command(Transpilable):
 
 # ends the current pattern
 # note: this doesn't mean nothing can come after it, it just means it ends the pattern here
+# note: ???
 class EndPattern(Command):
     def __init__(self):
         pass
